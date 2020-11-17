@@ -19,13 +19,13 @@ class OrderApi extends MainApi {
   
   Future<OrderModel> cancelOrder({
     String id,
-    String cancel,
+    String cancelReason,
   }) async {
     try {
       final response = await patchRequest(
         url: "$host/user/order/$id",
         useAuth: true,
-        body: {"cancelReason": cancel}
+        body: {"cancelReason": cancelReason}
       );
       return orderModelFromMap(response);
     } catch (error) {

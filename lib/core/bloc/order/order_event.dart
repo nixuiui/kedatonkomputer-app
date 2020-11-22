@@ -62,6 +62,21 @@ class CancelOrder extends OrderEvent {
   List<Object> get props => [id, cancelReason];
 }
 
+class ReviewOrder extends OrderEvent {
+  final String id;
+  final String review;
+  final int rating;
+
+  const ReviewOrder({
+    this.id,
+    this.review,
+    this.rating,
+  });
+
+  @override
+  List<Object> get props => [id, review, rating];
+}
+
 class FinishTransaction extends OrderEvent {
   final String id;
 

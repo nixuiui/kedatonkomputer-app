@@ -23,7 +23,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       }
     }
     
-    if (event is LoadDetailOrder) {
+    else if (event is LoadDetailOrder) {
       yield OrderLoading();
       try {
         var response = await api.detailOrder(event.id);
@@ -34,7 +34,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       }
     }
     
-    if (event is CreateOrder) {
+    else if (event is CreateOrder) {
       yield OrderLoading();
       try {
         await api.createOrder(event.data);
@@ -45,7 +45,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       }
     }
     
-    if (event is CancelOrder) {
+    else if (event is CancelOrder) {
       yield OrderLoading();
       try {
         await api.cancelOrder(id: event.id, cancelReason: event.cancelReason);
@@ -56,11 +56,22 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       }
     }
     
-    if (event is FinishTransaction) {
+    else if (event is FinishTransaction) {
       yield OrderLoading();
       try {
         await api.transactionDone(event.id);
         yield TransactionFinished();
+      } catch (error) {
+        print("ERROR: $error");
+        yield OrderFailure(error: error.toString());
+      }
+    }
+    
+    else if (event is ReviewOrder) {
+      yield OrderLoading();
+      try {
+        await api.sendReviews(rating: event.rating, review: event.review, id: event.id);
+        yield OrderReviewed();
       } catch (error) {
         print("ERROR: $error");
         yield OrderFailure(error: error.toString());

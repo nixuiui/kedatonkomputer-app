@@ -29,6 +29,8 @@ class OrderCanceled extends OrderState {}
 
 class TransactionFinished extends OrderState {}
 
+class OrderReviewed extends OrderState {}
+
 class OrderDetailLoaded extends OrderState {
   final OrderModel data;
 

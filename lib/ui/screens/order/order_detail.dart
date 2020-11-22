@@ -6,6 +6,7 @@ import 'package:kedatonkomputer/core/bloc/order/order_event.dart';
 import 'package:kedatonkomputer/core/bloc/order/order_state.dart';
 import 'package:kedatonkomputer/core/models/order_model.dart';
 import 'package:kedatonkomputer/ui/screens/order/cancel_order.dart';
+import 'package:kedatonkomputer/ui/screens/order/review_order.dart';
 import 'package:kedatonkomputer/ui/widget/box.dart';
 import 'package:kedatonkomputer/ui/widget/button.dart';
 import 'package:kedatonkomputer/ui/widget/text.dart';
@@ -50,6 +51,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
             } else if(state is OrderCanceled) {
               bloc.add(LoadDetailOrder(id: order.id));
             } else if(state is TransactionFinished) {
+              bloc.add(LoadDetailOrder(id: order.id));
+            } else if(state is OrderReviewed) {
               bloc.add(LoadDetailOrder(id: order.id));
             }
           }
@@ -154,7 +157,21 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                   });
                 },
               ),
-            ) : Container()
+            ) : Container(),
+            order?.statusTransaction == "selesai" ? Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Divider(height: 0),
+                Box(
+                  padding: 16,
+                  child: PrimaryText("Review Order"),
+                  onPressed: () => Navigator.push(context, MaterialPageRoute(
+                    builder: (context) => ReviewOrderPage(order: order, bloc: bloc)
+                  )),
+                ),
+                Divider(height: 0),
+              ],
+            ) : Container(),
           ],
         ),
       ),

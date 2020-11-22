@@ -74,7 +74,7 @@ class OrderApi extends MainApi {
   }
   
   Future<bool> sendReviews({
-    String rating,
+    int rating,
     String review,
     String id
   }) async {

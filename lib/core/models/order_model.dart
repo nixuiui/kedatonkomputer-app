@@ -1,12 +1,54 @@
 import 'dart:convert';
 
-OrderModel orderModelFromMap(String str) => OrderModel.fromMap(json.decode(str));
+import 'package:kedatonkomputer/core/models/product_model.dart';
 
-String orderModelToMap(OrderModel data) => json.encode(data.toMap());
+OrderResponse orderResponseFromJson(String str) => OrderResponse.fromJson(json.decode(str));
 
-List<OrderModel> ordersModelFromMap(String str) => List<OrderModel>.from(json.decode(str).map((x) => OrderModel.fromMap(x)));
+String orderResponseToJson(OrderResponse data) => json.encode(data.toJson());
 
-String ordersModelToMap(List<OrderModel> data) => json.encode(List<dynamic>.from(data.map((x) => x.toMap())));
+class OrderResponse {
+    OrderResponse({
+        this.order,
+        this.totalOrder,
+        this.totalPages,
+        this.totalAllOrder,
+        this.currentPage,
+        this.limit,
+    });
+
+    List<OrderModel> order;
+    int totalOrder;
+    int totalPages;
+    int totalAllOrder;
+    int currentPage;
+    int limit;
+
+    factory OrderResponse.fromJson(Map<String, dynamic> json) => OrderResponse(
+        order: List<OrderModel>.from(json["order"].map((x) => OrderModel.fromJson(x))),
+        totalOrder: json["totalOrder"],
+        totalPages: json["totalPages"],
+        totalAllOrder: json["totalAllOrder"],
+        currentPage: json["currentPage"],
+        limit: json["limit"],
+    );
+
+    Map<String, dynamic> toJson() => {
+        "order": List<dynamic>.from(order.map((x) => x.toJson())),
+        "totalOrder": totalOrder,
+        "totalPages": totalPages,
+        "totalAllOrder": totalAllOrder,
+        "currentPage": currentPage,
+        "limit": limit,
+    };
+}
+
+OrderModel orderModelFromMap(String str) => OrderModel.fromJson(json.decode(str));
+
+String orderModelToMap(OrderModel data) => json.encode(data.toJson());
+
+List<OrderModel> ordersModelFromMap(String str) => List<OrderModel>.from(json.decode(str).map((x) => OrderModel.fromJson(x)));
+
+String ordersModelToMap(List<OrderModel> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class OrderModel {
     OrderModel({
@@ -49,7 +91,7 @@ class OrderModel {
     DateTime updatedAt;
     int v;
 
-    factory OrderModel.fromMap(Map<String, dynamic> json) => OrderModel(
+    factory OrderModel.fromJson(Map<String, dynamic> json) => OrderModel(
         orderNotes: json["orderNotes"],
         admin: json["admin"],
         totalPrice: json["totalPrice"],
@@ -63,14 +105,14 @@ class OrderModel {
         id: json["_id"],
         transactionCode: json["transactionCode"],
         user: json["user"],
-        detailProducts: List<DetailProduct>.from(json["detailProducts"].map((x) => DetailProduct.fromMap(x))),
+        detailProducts: json["detailProducts"] == null ? [] : List<DetailProduct>.from(json["detailProducts"].map((x) => DetailProduct.fromJson(x))),
         statusTransaction: json["statusTransaction"],
         createdAt: DateTime.parse(json["createdAt"]),
         updatedAt: DateTime.parse(json["updatedAt"]),
         v: json["__v"],
     );
 
-    Map<String, dynamic> toMap() => {
+    Map<String, dynamic> toJson() => {
         "orderNotes": orderNotes,
         "admin": admin,
         "totalPrice": totalPrice,
@@ -84,7 +126,7 @@ class OrderModel {
         "_id": id,
         "transactionCode": transactionCode,
         "user": user,
-        "detailProducts": List<dynamic>.from(detailProducts.map((x) => x.toMap())),
+        "detailProducts": List<dynamic>.from(detailProducts.map((x) => x.toJson())),
         "statusTransaction": statusTransaction,
         "createdAt": createdAt.toIso8601String(),
         "updatedAt": updatedAt.toIso8601String(),
@@ -103,22 +145,22 @@ class DetailProduct {
 
     String id;
     int count;
-    String product;
+    Product product;
     int price;
     int totalPrice;
 
-    factory DetailProduct.fromMap(Map<String, dynamic> json) => DetailProduct(
+    factory DetailProduct.fromJson(Map<String, dynamic> json) => DetailProduct(
         id: json["_id"],
         count: json["count"],
-        product: json["product"],
+        product: Product.fromMap(json["product"]),
         price: json["price"],
         totalPrice: json["totalPrice"],
     );
 
-    Map<String, dynamic> toMap() => {
+    Map<String, dynamic> toJson() => {
         "_id": id,
         "count": count,
-        "product": product,
+        "product": product.toMap(),
         "price": price,
         "totalPrice": totalPrice,
     };

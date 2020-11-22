@@ -5,6 +5,7 @@ import 'package:kedatonkomputer/core/bloc/cart/cart_bloc.dart';
 import 'package:kedatonkomputer/core/bloc/cart/cart_event.dart';
 import 'package:kedatonkomputer/core/bloc/cart/cart_state.dart';
 import 'package:kedatonkomputer/core/models/cart_model.dart';
+import 'package:kedatonkomputer/ui/screens/order/create_order.dart';
 import 'package:kedatonkomputer/ui/widget/box.dart';
 import 'package:kedatonkomputer/ui/widget/button.dart';
 import 'package:kedatonkomputer/ui/widget/item/cart_item.dart';
@@ -99,7 +100,11 @@ class _CartPageState extends State<CartPage> {
               child: SafeArea(
                 child: RaisedButtonPrimary(
                   text: "Beli Sekarang: ${rupiah(cart?.totalCost)}",
-                  onPressed: (){},
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => CreateOrderPage(cart: cart)
+                    ));
+                  },
                 ),
               )
             )

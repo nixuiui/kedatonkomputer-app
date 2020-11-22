@@ -11,6 +11,7 @@ import 'package:kedatonkomputer/core/models/cart_model.dart';
 import 'package:kedatonkomputer/core/models/product_model.dart';
 import 'package:kedatonkomputer/helper/app_consts.dart';
 import 'package:kedatonkomputer/ui/screens/cart_page.dart';
+import 'package:kedatonkomputer/ui/screens/order/order_page.dart';
 import 'package:kedatonkomputer/ui/screens/product_detail.dart';
 import 'package:kedatonkomputer/ui/screens/profile_page.dart';
 import 'package:kedatonkomputer/ui/widget/box.dart';
@@ -124,7 +125,7 @@ class _HomePageState extends State<HomePage> {
             IconButton(
               icon: Icon(Icons.shopping_cart), 
               onPressed: () => Navigator.push(context, MaterialPageRoute(
-                builder: (context) => ProfilePage()
+                builder: (context) => OrderPage()
               ))
             )
           ],

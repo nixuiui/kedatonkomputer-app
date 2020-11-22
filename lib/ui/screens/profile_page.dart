@@ -51,19 +51,23 @@ class _ProfilePageState extends State<ProfilePage> {
                     TextCustom(account?.phoneNumber ?? ""),
                     Divider(height: 32),
                     Box(
-                      color: Colors.white,
-                      padding: 16,
                       borderRadius: 8,
-                      boxShadow: [AppBoxShadow.type3],
-                      child: BoldText("Hubungi via Whatsapp"),
-                    ),
-                    SizedBox(height: 16),
-                    Box(
-                      color: Colors.white,
-                      padding: 16,
-                      borderRadius: 8,
-                      boxShadow: [AppBoxShadow.type3],
-                      child: BoldText("Kritik dan Saran"),
+                      borderColor: Colors.grey[300],
+                      child: Column(
+                        children: [
+                          Box(
+                            color: Colors.transparent,
+                            padding: 16,
+                            child: BoldText("Hubungi via Whatsapp"),
+                          ),
+                          Divider(height: 0),
+                          Box(
+                            color: Colors.transparent,
+                            padding: 16,
+                            child: BoldText("Kritik dan Saran"),
+                          ),
+                        ],
+                      ),
                     ),
                     SizedBox(height: 16),
                   ],

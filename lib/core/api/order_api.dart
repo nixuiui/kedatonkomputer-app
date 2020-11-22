@@ -4,42 +4,42 @@ import 'package:kedatonkomputer/core/models/order_post_model.dart';
 
 class OrderApi extends MainApi {
   
-  Future<OrderModel> createOrder(OrderPost data) async {
+  Future<bool> createOrder(OrderPost data) async {
     try {
-      final response = await postRequest(
+      await postRequest(
         url: "$host/user/order",
         useAuth: true,
         body: data.toMap()
       );
-      return orderModelFromMap(response);
+      return true;
     } catch (error) {
       throw error;
     }
   }
   
-  Future<OrderModel> cancelOrder({
+  Future<bool> cancelOrder({
     String id,
     String cancelReason,
   }) async {
     try {
-      final response = await patchRequest(
+      await patchRequest(
         url: "$host/user/order/$id",
         useAuth: true,
         body: {"cancelReason": cancelReason}
       );
-      return orderModelFromMap(response);
+      return true;
     } catch (error) {
       throw error;
     }
   }
   
-  Future<OrderModel> transactionDone(String id) async {
+  Future<bool> transactionDone(String id) async {
     try {
-      final response = await patchRequest(
+      await putRequest(
         url: "$host/user/order/$id",
         useAuth: true
       );
-      return orderModelFromMap(response);
+      return true;
     } catch (error) {
       throw error;
     }
@@ -67,19 +67,19 @@ class OrderApi extends MainApi {
         url: "$host/user/order?page=$page&limit=$limit&status=$status",
         useAuth: true
       );
-      return ordersModelFromMap(response);
+      return orderResponseFromJson(response).order;
     } catch (error) {
       throw error;
     }
   }
   
-  Future<OrderModel> sendReviews({
+  Future<bool> sendReviews({
     String rating,
     String review,
     String id
   }) async {
     try {
-      final response = await patchRequest(
+      await patchRequest(
         url: "$host/user/order-review/$id",
         useAuth: true,
         body: {
@@ -87,7 +87,7 @@ class OrderApi extends MainApi {
           "review": review
         }
       );
-      return orderModelFromMap(response);
+      return true;
     } catch (error) {
       throw error;
     }

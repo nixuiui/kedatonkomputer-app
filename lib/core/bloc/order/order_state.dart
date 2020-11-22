@@ -23,38 +23,11 @@ class OrderLoaded extends OrderState {
   List<Object> get props => [data];
 }
 
-class OrderCreated extends OrderState {
-  final OrderModel data;
+class OrderCreated extends OrderState {}
 
-  const OrderCreated({
-    @required this.data,
-  });
+class OrderCanceled extends OrderState {}
 
-  @override
-  List<Object> get props => [data];
-}
-
-class OrderCanceled extends OrderState {
-  final OrderModel data;
-
-  const OrderCanceled({
-    @required this.data,
-  });
-
-  @override
-  List<Object> get props => [data];
-}
-
-class TransactionFinished extends OrderState {
-  final OrderModel data;
-
-  const TransactionFinished({
-    @required this.data,
-  });
-
-  @override
-  List<Object> get props => [data];
-}
+class TransactionFinished extends OrderState {}
 
 class OrderDetailLoaded extends OrderState {
   final OrderModel data;

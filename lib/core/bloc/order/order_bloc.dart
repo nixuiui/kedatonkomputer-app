@@ -37,8 +37,8 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     if (event is CreateOrder) {
       yield OrderLoading();
       try {
-        var response = await api.createOrder(event.data);
-        yield OrderCreated(data: response);
+        await api.createOrder(event.data);
+        yield OrderCreated();
       } catch (error) {
         print("ERROR: $error");
         yield OrderFailure(error: error.toString());
@@ -48,8 +48,8 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     if (event is CancelOrder) {
       yield OrderLoading();
       try {
-        var response = await api.cancelOrder(id: event.id, cancelReason: event.cancelReason);
-        yield OrderCanceled(data: response);
+        await api.cancelOrder(id: event.id, cancelReason: event.cancelReason);
+        yield OrderCanceled();
       } catch (error) {
         print("ERROR: $error");
         yield OrderFailure(error: error.toString());
@@ -59,8 +59,8 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     if (event is FinishTransaction) {
       yield OrderLoading();
       try {
-        var response = await api.transactionDone(event.id);
-        yield TransactionFinished(data: response);
+        await api.transactionDone(event.id);
+        yield TransactionFinished();
       } catch (error) {
         print("ERROR: $error");
         yield OrderFailure(error: error.toString());

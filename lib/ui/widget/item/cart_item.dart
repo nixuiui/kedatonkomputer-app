@@ -1,40 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:indonesia/indonesia.dart';
-import 'package:kedatonkomputer/core/bloc/cart/cart_bloc.dart';
 import 'package:kedatonkomputer/core/models/cart_model.dart';
 import 'package:kedatonkomputer/helper/app_consts.dart';
 import 'package:kedatonkomputer/ui/widget/box.dart';
 import 'package:kedatonkomputer/ui/widget/loading.dart';
 import 'package:kedatonkomputer/ui/widget/text.dart';
 
-class CartItem extends StatefulWidget {
+class CartItem extends StatelessWidget {
   const CartItem({
     Key key,
     this.cart,
     this.isDeleting = false,
+    this.isUpdating = false,
     this.onDelete,
-    this.onUpdate,
+    this.onMin,
+    this.onAdd,
   }) : super(key: key);
 
   final Cart cart;
   final bool isDeleting;
+  final bool isUpdating;
   final VoidCallback onDelete;
-  final VoidCallback onUpdate;
-
-  @override
-  _CartItemState createState() => _CartItemState();
-}
-
-class _CartItemState extends State<CartItem> {
-  
-  var bloc = CartBloc();
-  Cart cart;
-
-  @override
-  void initState() {
-    cart = widget.cart;
-    super.initState();
-  }
+  final VoidCallback onMin;
+  final VoidCallback onAdd;
 
   @override
   Widget build(BuildContext context) {
@@ -65,13 +53,14 @@ class _CartItemState extends State<CartItem> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Row(
+              isUpdating ? LoadingCustom() : Row(
                 children: [
                   Box(
                     width: 25,
                     height: 25,
                     color: Colors.grey[200],
-                    child: Center(child: Text("-"))
+                    child: Center(child: Text("-")),
+                    onPressed: onMin,
                   ),
                   Box(
                     width: 25,
@@ -83,14 +72,15 @@ class _CartItemState extends State<CartItem> {
                     width: 25,
                     height: 25,
                     color: Colors.grey[200],
-                    child: Center(child: Text("-"))
+                    child: Center(child: Text("+")),
+                    onPressed: onAdd,
                   ),
                 ],
               ),
               SizedBox(height: 16),
-              widget.isDeleting ? LoadingCustom(size: 12) : GestureDetector(
+              isDeleting ? LoadingCustom(size: 12) : GestureDetector(
                 behavior: HitTestBehavior.translucent,
-                onTap: widget.onDelete,
+                onTap: onDelete,
                 child: Icon(Icons.delete, color: Colors.grey)
               )
             ],

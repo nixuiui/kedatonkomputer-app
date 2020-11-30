@@ -15,7 +15,9 @@ import 'package:kedatonkomputer/ui/screens/order/order_page.dart';
 import 'package:kedatonkomputer/ui/screens/product_detail.dart';
 import 'package:kedatonkomputer/ui/screens/profile_page.dart';
 import 'package:kedatonkomputer/ui/widget/box.dart';
+import 'package:kedatonkomputer/ui/widget/form.dart';
 import 'package:kedatonkomputer/ui/widget/item/product_item.dart';
+import 'package:kedatonkomputer/ui/widget/loading.dart';
 import 'package:kedatonkomputer/ui/widget/text.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:toast/toast.dart';
@@ -38,7 +40,7 @@ class _HomePageState extends State<HomePage> {
         hasReachedMax = false;
 
   RefreshController _refreshController = RefreshController(initialRefresh: false);
-  // final _searchController = TextEditingController();
+  var controller = TextEditingController();
 
   final _scrollController = ScrollController();
   final _scrollThreshold = 200.0;
@@ -47,7 +49,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     _scrollController.addListener(_onScroll);
     cartBloc.add(LoadCarts());
-    productBloc.add(LoadProducts(isRefresh: true));
+    productBloc.add(LoadProducts(isRefresh: true, search: ""));
     super.initState();
   }
 
@@ -57,7 +59,7 @@ class _HomePageState extends State<HomePage> {
         isStarting = true;
       });
       cartBloc.add(LoadCarts());
-      productBloc.add(LoadProducts(isRefresh: true));
+      productBloc.add(LoadProducts(isRefresh: true, search: controller?.text ?? ""));
     }
   }
 
@@ -113,6 +115,7 @@ class _HomePageState extends State<HomePage> {
         )
       ],
       child: Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
           leading: IconButton(
             icon: Icon(Icons.account_circle), 
@@ -132,27 +135,53 @@ class _HomePageState extends State<HomePage> {
         ),
         body: Stack(
           children: [
-            SmartRefresher(
-              controller: _refreshController,
-              onRefresh: loadProduct,
-              child: GridView.count(
-                crossAxisCount: 2,
-                shrinkWrap: true,
-                padding: EdgeInsets.only(top: 8, right: 8, left: 8, bottom: 160),
-                childAspectRatio: 3/4.1,
-                physics: ClampingScrollPhysics(),
-                children: List.generate(products.length, (index) {
-                  return Container(
-                    margin: EdgeInsets.all(8),
-                    child: ProductItem(
-                      product: products[index],
-                      onPressed: () => Navigator.push(context, MaterialPageRoute(
-                        builder: (context) => ProductDetailPage(product: products[index])
-                      )).then((value) => cartBloc.add(LoadCarts())),
+            Column(
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: TextFieldBox(
+                        textHint: "Cari Produk",
+                        backgroundColor: Colors.white,
+                        borderColor: Colors.white,
+                        controller: controller,
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.search),
+                      onPressed: () {
+                        loadProduct();
+                      },
                     )
-                  );
-                })
-              ),
+                  ],
+                ),
+                Divider(),
+                Expanded(
+                  child: isStarting ? LoadingCustom() : SmartRefresher(
+                    controller: _refreshController,
+                    onRefresh: loadProduct,
+                    child: GridView.count(
+                      crossAxisCount: 2,
+                      shrinkWrap: true,
+                      padding: EdgeInsets.only(top: 8, right: 8, left: 8, bottom: 160),
+                      childAspectRatio: 3/4.1,
+                      physics: ClampingScrollPhysics(),
+                      children: List.generate(products.length, (index) {
+                        return Container(
+                          margin: EdgeInsets.all(8),
+                          child: ProductItem(
+                            product: products[index],
+                            onPressed: () => Navigator.push(context, MaterialPageRoute(
+                              builder: (context) => ProductDetailPage(product: products[index])
+                            )).then((value) => cartBloc.add(LoadCarts())),
+                          )
+                        );
+                      })
+                    ),
+                  ),
+                ),
+              ],
             ),
             (cart?.cart?.length ?? 0) <= 0 ? Container() : Positioned(
               bottom: 0,

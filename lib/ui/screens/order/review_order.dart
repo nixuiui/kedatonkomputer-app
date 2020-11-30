@@ -4,6 +4,7 @@ import 'package:kedatonkomputer/core/bloc/order/order_bloc.dart';
 import 'package:kedatonkomputer/core/bloc/order/order_event.dart';
 import 'package:kedatonkomputer/core/bloc/order/order_state.dart';
 import 'package:kedatonkomputer/core/models/order_model.dart';
+import 'package:kedatonkomputer/ui/widget/box.dart';
 import 'package:kedatonkomputer/ui/widget/button.dart';
 import 'package:kedatonkomputer/ui/widget/form.dart';
 import 'package:toast/toast.dart';
@@ -26,6 +27,7 @@ class ReviewOrderPage extends StatefulWidget {
 class _ReviewOrderPageState extends State<ReviewOrderPage> {
 
   var controller = TextEditingController();
+  var rating = 0;
   var isLoading = false;
 
   @override
@@ -47,40 +49,59 @@ class _ReviewOrderPageState extends State<ReviewOrderPage> {
           title: Text("Review Order")
         ),
         body: SafeArea(
-          child: Column(
-            children: [
-              Expanded(
-                child: Container(
-                  padding: EdgeInsets.all(16),
-                  child: TextAreaBorderBottom(
-                    textHint: "Tulis alasan dibatalkan",
-                    minLines: 10,
-                    controller: controller,
+          child: Box(
+            padding: 16,
+            child: Column(
+              children: [
+                Center(
+                  child: Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [1,2,3,4,5].map((e) {
+                      return IconButton(
+                        icon: Icon(
+                          Icons.star,
+                          color: rating >= e ? Colors.yellow : Colors.grey[300],
+                          size: 40
+                        ),
+                        onPressed: () => setState(() => rating = e)
+                      );
+                    }).toList()
                   ),
                 ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(16),
-                child: RaisedButtonPrimary(
-                  text: "Kirim Review",
-                  isLoading: isLoading,
-                  onPressed: isLoading ? null : () {
-                    if(controller.text == null || controller.text == ""){
-                      Toast.show("Isi alasan dulu", context);
-                    } else {
-                      setState(() {
-                        isLoading = true;
-                      });
-                      widget.bloc.add(ReviewOrder(
-                        id: widget.order.id, 
-                        review: controller.text,
-                        rating: 3
-                      ));
-                    }
-                  }
+                SizedBox(height: 16),
+                Expanded(
+                  child: Container(
+                    padding: EdgeInsets.all(16),
+                    child: TextAreaBorderBottom(
+                      textHint: "Tulis alasan dibatalkan",
+                      minLines: 10,
+                      controller: controller,
+                    ),
+                  ),
                 ),
-              )
-            ],
+                Padding(
+                  padding: EdgeInsets.all(16),
+                  child: RaisedButtonPrimary(
+                    text: "Kirim Review",
+                    isLoading: isLoading,
+                    onPressed: isLoading ? null : () {
+                      if(controller.text == null || controller.text == ""){
+                        Toast.show("Isi alasan dulu", context);
+                      } else {
+                        setState(() {
+                          isLoading = true;
+                        });
+                        widget.bloc.add(ReviewOrder(
+                          id: widget.order.id, 
+                          review: controller.text,
+                          rating: rating
+                        ));
+                      }
+                    }
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),

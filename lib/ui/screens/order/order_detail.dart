@@ -9,16 +9,17 @@ import 'package:kedatonkomputer/ui/screens/order/cancel_order.dart';
 import 'package:kedatonkomputer/ui/screens/order/review_order.dart';
 import 'package:kedatonkomputer/ui/widget/box.dart';
 import 'package:kedatonkomputer/ui/widget/button.dart';
+import 'package:kedatonkomputer/ui/widget/loading.dart';
 import 'package:kedatonkomputer/ui/widget/text.dart';
 
 class OrderDetailPage extends StatefulWidget {
 
   const OrderDetailPage({
     Key key,
-    this.order,
+    this.id,
   }) : super(key: key);
   
-  final OrderModel order;
+  final String id;
 
   @override
   _OrderDetailPageState createState() => _OrderDetailPageState();
@@ -29,11 +30,11 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
   var bloc = OrderBloc();
   OrderModel order;
   var isAccepting = false;
+  var isStarting = true;
 
   @override
   void initState() {
-    order = widget.order;
-    bloc.add(LoadDetailOrder(id: order.id));
+    bloc.add(LoadDetailOrder(id: widget.id));
     super.initState();
   }
 
@@ -47,6 +48,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
             if(state is OrderDetailLoaded) {
               setState(() {
                 order = state.data;
+                isStarting = false;
               });
             } else if(state is OrderCanceled) {
               bloc.add(LoadDetailOrder(id: order.id));
@@ -62,7 +64,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
         appBar: AppBar(
           title: Text("Detail Order"),
         ),
-        body: ListView(
+        body: isStarting ? Center(child: LoadingCustom()) : ListView(
           children: [
             ListView.separated(
               shrinkWrap: true,
@@ -158,20 +160,52 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                 },
               ),
             ) : Container(),
-            order?.statusTransaction == "selesai" ? Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Divider(height: 0),
-                Box(
-                  padding: 16,
-                  child: PrimaryText("Review Order"),
-                  onPressed: () => Navigator.push(context, MaterialPageRoute(
-                    builder: (context) => ReviewOrderPage(order: order, bloc: bloc)
-                  )),
+            order?.statusTransaction == "selesai" ? (
+              order?.ulasan == null || order?.ulasan == "" ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Divider(height: 0),
+                  Box(
+                    padding: 16,
+                    child: PrimaryText("Review Order"),
+                    onPressed: () => Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => ReviewOrderPage(order: order, bloc: bloc)
+                    )),
+                  ),
+                  Divider(height: 0),
+                ],
+              ) : Box(
+                padding: 16,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    LabelText("Ulasan"),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(Icons.star, size: 14, color: Colors.yellow[700]),
+                        Text(order?.rating?.toString() ?? "0")
+                      ],
+                    ),
+                    TextCustom(order?.ulasan ?? "-"),
+                  ],
                 ),
-                Divider(height: 0),
-              ],
+              )
             ) : Container(),
+            SizedBox(height: 16),
+            Divider(height: 0),
+            order?.proofItemReceived != null ? Box(
+              padding: 16,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Bukti Kedatangan"),
+                  SizedBox(height: 16),
+                  Image.network(order?.proofItemReceived ?? "")
+                ],
+              ),
+            ) : Container(),
+            Divider(height: 0),
           ],
         ),
       ),

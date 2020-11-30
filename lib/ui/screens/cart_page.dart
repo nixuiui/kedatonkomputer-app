@@ -32,6 +32,9 @@ class _CartPageState extends State<CartPage> {
 
   var isDeleting = false;
   var indexDeleting = -1;
+  
+  var isUpdating = false;
+  var indexUpdating = -1;
 
   @override
   void initState() {
@@ -49,6 +52,13 @@ class _CartPageState extends State<CartPage> {
           listener: (context, state) {
             if(state is CartLoaded) {
               setState(() {
+                cart = state.data;
+                isStarting = false;
+              });
+            } else if(state is CartItemUpdated) {
+              setState(() {
+                isUpdating = false;
+                indexUpdating = -1;
                 cart = state.data;
                 isStarting = false;
               });
@@ -85,10 +95,28 @@ class _CartPageState extends State<CartPage> {
                   return CartItem(
                     cart: cart?.cart[index] ?? null,
                     isDeleting: isDeleting && indexDeleting == index,
+                    isUpdating: isUpdating && indexUpdating == index,
+                    onMin: () {
+                      if((cart?.cart[index]?.quantity ?? 0) > 1) {
+                        setState(() {
+                          isUpdating = true;
+                          indexUpdating = index;
+                          cartBloc.add(UpdateCartItem(productId: cart?.cart[index]?.product?.id ?? "", quantity: (cart?.cart[index]?.quantity ?? 0)-1));
+                        });
+                      }
+                    },
+                    onAdd: () {
+                      setState(() {
+                        isUpdating = true;
+                        indexUpdating = index;
+                        cartBloc.add(UpdateCartItem(productId: cart?.cart[index]?.product?.id ?? "", quantity: (cart?.cart[index]?.quantity ?? 0)+1));
+                      });
+                    },
                     onDelete: (){
                       setState(() {
                         isDeleting = true;
                         indexDeleting = index;
+                        cartBloc.add(DeleteCartItem(productId: cart?.cart[index]?.product?.id ?? ""));
                       });
                     },
                   );
@@ -100,7 +128,7 @@ class _CartPageState extends State<CartPage> {
               child: SafeArea(
                 child: RaisedButtonPrimary(
                   text: "Beli Sekarang: ${rupiah(cart?.totalCost)}",
-                  onPressed: () {
+                  onPressed: isUpdating || isDeleting ? null : () {
                     Navigator.push(context, MaterialPageRoute(
                       builder: (context) => CreateOrderPage(cart: cart)
                     ));

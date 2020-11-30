@@ -30,5 +30,45 @@ class ProductApi extends MainApi {
       throw error;
     }
   }
+
+  Future<List<Product>> adminLoadProducts({
+    int page = 1,
+    int limit = 10,
+    String search = ""
+  }) async {
+    try {
+      final response = await getRequest(
+        url: "$host/admin/product?page=$page&limit=$limit&search=$search",
+        useAuth: true
+      );
+      return productResponseModelFromMap(response).product;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  Future<Product> adminLoadProductDetail({String id}) async {
+    try {
+      final response = await postRequest(
+        url: "$host/admin/product/$id",
+        useAuth: true
+      );
+      return productFromMap(response);
+    } catch (error) {
+      throw error;
+    }
+  }
+  
+  Future<Product> adminCreateProduct({String id}) async {
+    try {
+      final response = await postRequest(
+        url: "$host/admin/product/$id",
+        useAuth: true
+      );
+      return productFromMap(response);
+    } catch (error) {
+      throw error;
+    }
+  }
   
 }

@@ -92,7 +92,7 @@ class _OrderPageState extends State<OrderPage> {
                             radius: 4,
                             text: "Detail",
                             onPressed: () => Navigator.push(context, MaterialPageRoute(
-                              builder: (context) => OrderDetailPage(order: orders[index])
+                              builder: (context) => OrderDetailPage(id: orders[index].id)
                             )).then((value) => bloc.add(LoadMyOrders()))
                           ),
                         ],

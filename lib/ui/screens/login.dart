@@ -49,6 +49,8 @@ class _LoginPageState extends State<LoginPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Image.asset("assets/logo.jpeg", height: 60),
+                SizedBox(height: 32),
                 TitleText("KEDATON KOMPUTER"),
                 SizedBox(height: 32),
                 TextFieldBorderBottom(
@@ -59,6 +61,7 @@ class _LoginPageState extends State<LoginPage> {
                 TextFieldBorderBottom(
                   textHint: "Password",
                   controller: passwordController,
+                  isObsecure: true,
                 ),
                 SizedBox(height: 16),
                 RaisedButtonPrimary(

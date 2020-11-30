@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:bloc/bloc.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:kedatonkomputer/core/api/auth_api.dart';
 import 'package:kedatonkomputer/core/bloc/auth/auth_event.dart';
 import 'package:kedatonkomputer/core/bloc/auth/auth_state.dart';
@@ -36,6 +37,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         SharedPreferencesHelper.setApiToken(response.token);
         SharedPreferencesHelper.setAccount(jsonEncode(response.toMap()));
         SharedPreferencesHelper.setAuthenticated(true);
+        FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+        _firebaseMessaging.subscribeToTopic(response?.id ?? "");
         yield AuthLoginSuccess(data: response);
       } catch (error) {
         print("ERROR: $error");
@@ -64,9 +67,23 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         yield AuthFailure(error: error.toString());
       }
     }
+
+    if (event is UpdateProfile) {
+      yield AuthLoading();
+      try {
+        var response = await api.editProfile(data: event.data);
+        yield ProfileUpdated(data: response);
+      } catch (error) {
+        print("ERROR: $error");
+        yield AuthFailure(error: error.toString());
+      }
+    }
     
     if (event is Logout) {
       yield AuthLoading();
+      var account = accountModelFromMap(await SharedPreferencesHelper.getAccount());
+      FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+        _firebaseMessaging.unsubscribeFromTopic(account?.id ?? "");
       SharedPreferencesHelper.clear();
       yield AuthUnauthenticated();
     }

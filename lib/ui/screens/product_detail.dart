@@ -1,3 +1,4 @@
+import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:indonesia/indonesia.dart';
@@ -62,12 +63,17 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               child: ListView(
                 padding: EdgeInsets.all(16),
                 children: [
-                  Box(
-                    width: MediaQuery.of(context).size.width,
-                    height: 200,
-                    color: Colors.grey[200],
-                    borderRadius: 8,
-                    image: NetworkImage(product?.images[0] ?? ""),
+                  Stack(
+                    children: <Widget>[
+                      AspectRatio(
+                        aspectRatio: 3/2.3,
+                        child: Carousel(
+                          dotSize: 4,
+                          dotBgColor: Colors.transparent,
+                          images: List.generate(product.images.length, (index) => Image.network(product.images[index]))
+                        )
+                      ),
+                    ],
                   ),
                   SizedBox(height: 16),
                   TitleText(product?.name ?? "", maxLines: 3),

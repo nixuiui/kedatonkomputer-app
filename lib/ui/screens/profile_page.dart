@@ -9,7 +9,9 @@ import 'package:kedatonkomputer/helper/shared_preferences.dart';
 import 'package:kedatonkomputer/ui/screens/edit_profile.dart';
 import 'package:kedatonkomputer/ui/screens/login.dart';
 import 'package:kedatonkomputer/ui/widget/box.dart';
+import 'package:kedatonkomputer/ui/widget/loading.dart';
 import 'package:kedatonkomputer/ui/widget/text.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -19,6 +21,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
 
   var accountBloc = AuthBloc();
+  var isStarting = true;
   AccountModel account;
 
   @override
@@ -34,6 +37,7 @@ class _ProfilePageState extends State<ProfilePage> {
       listener: (context, state) {
         if(state is ProfileInfoLoaded) {
           setState(() {
+            isStarting = false;
             account = state.data;
           });
         }
@@ -46,7 +50,7 @@ class _ProfilePageState extends State<ProfilePage> {
           child: Column(
             children: [
               Expanded(
-                child: ListView(
+                child: isStarting ? Center(child: LoadingCustom()) : ListView(
                   padding: EdgeInsets.all(16),
                   children: [
                     account != null ? Row(
@@ -74,15 +78,19 @@ class _ProfilePageState extends State<ProfilePage> {
                     Box(
                       borderRadius: 8,
                       borderColor: Colors.grey[300],
-                      child: Column(
-                        children: [
-                          Box(
-                            color: Colors.transparent,
-                            padding: 16,
-                            child: BoldText("Hubungi via Whatsapp"),
-                          ),
-                        ],
-                      ),
+                      padding: 16,
+                      child: BoldText("Hubungi via Whatsapp"),
+                      onPressed: () {
+                        var url = Uri(
+                          scheme: "https",
+                          host: "api.whatsapp.com",
+                          path: "send",
+                          queryParameters: {
+                            "phone": account?.admin ?? ""
+                          }
+                        );
+                        launchURL(url.toString());
+                      },
                     ),
                     SizedBox(height: 16),
                   ],
@@ -111,4 +119,12 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     );
   }
+
+  launchURL(String url) async {
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    throw 'Could not launch $url';
+  }
+}
 }

@@ -6,6 +6,7 @@ import 'package:kedatonkomputer/core/bloc/auth/auth_state.dart';
 import 'package:kedatonkomputer/core/models/account_model.dart';
 import 'package:kedatonkomputer/ui/widget/button.dart';
 import 'package:kedatonkomputer/ui/widget/form.dart';
+import 'package:toast/toast.dart';
 
 class EditProfilePage extends StatefulWidget {
 
@@ -44,9 +45,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
       cubit: bloc,
       listener: (context, state) {
         if(state is ProfileUpdated) {
+          Toast.show("Berhasil disimpan", context);
           setState(() {
             isLoading = false;
             account = state.data;
+          });
+        } else if(state is AuthFailure) {
+          Toast.show(state.error, context);
+          setState(() {
+            isLoading = false;
           });
         }
       },

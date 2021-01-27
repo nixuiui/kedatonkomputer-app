@@ -146,6 +146,10 @@ class _HomePageState extends State<HomePage> {
                         backgroundColor: Colors.white,
                         borderColor: Colors.white,
                         controller: controller,
+                        onFieldSubmitted: (value) {
+                          controller?.text = value;
+                          loadProduct();
+                        },
                       ),
                     ),
                     IconButton(

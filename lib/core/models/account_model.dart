@@ -18,6 +18,7 @@ class AccountModel {
         this.isActive,
         this.photoProfile,
         this.token,
+        this.admin,
     });
 
     String id;
@@ -32,6 +33,7 @@ class AccountModel {
     bool isActive;
     String photoProfile;
     String token;
+    String admin;
 
     factory AccountModel.fromMap(Map<String, dynamic> json) => AccountModel(
         id: json["_id"] ?? null,
@@ -46,6 +48,7 @@ class AccountModel {
         isActive: json["isActive"] ?? null,
         photoProfile: json["photoProfile"] ?? null,
         token: json["token"] ?? null,
+        admin: json["admin"] ?? null,
     );
 
     Map<String, dynamic> toMap() => {
@@ -60,6 +63,7 @@ class AccountModel {
         "isActive": isActive,
         "photoProfile": photoProfile,
         "token": token,
+        "admin": admin,
     };
     
     Map<String, dynamic> toMapForEditProfile() => {

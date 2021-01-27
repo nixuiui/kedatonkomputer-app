@@ -10,8 +10,6 @@ class CartApi extends MainApi {
         url: "$host/user/cart",
         useAuth: true
       );
-      print("cartModelFromMap(response)");
-      print(cartModelFromMap(response));
       return cartModelFromMap(response);
     } catch (error) {
       throw error;
